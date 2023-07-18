@@ -11,3 +11,25 @@ A Swift API Client for GitHub REST &amp; GraphQL
 
 ### GraphQL
 - [x] Contributions
+
+## Usage
+
+This library provides simple access to various GitHub APIs. Here's an example of how you can use it to fetch user contributions:
+
+```swift
+import GithubKit
+
+// Initialize GithubKit with your GitHub token.
+let githubKit = GitHubKit(config: GitHubKitConfiguration(token: "{your_github_token}"))
+
+do {
+    // Fetch contributions for a specific user.
+    let response = try await githubKit.contributions(userName: "username")
+
+    // Use response here.
+    print(response)
+
+} catch {
+    print("Failed to fetch contributions: \(error)")
+}
+```
