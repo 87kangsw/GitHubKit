@@ -15,7 +15,24 @@ extension GraphQLResponse {
 
     // MARK: - ContributionsCollection
     struct ContributionsCollection: Decodable {
+        let userInfo: UserInfo
         let contributionCalendar: ContributionCalendar
+        
+        enum CodingKeys: String, CodingKey {
+            case userInfo = "user"
+            case contributionCalendar
+        }
+    }
+    
+    // MARK: - Profile
+    struct UserInfo: Decodable {
+        let avatarURL: String?
+        let name: String
+        
+        enum CodingKeys: String, CodingKey {
+            case avatarURL = "avatarUrl"
+            case name
+        }
     }
 
     // MARK: - ContributionCalendar
@@ -29,7 +46,7 @@ extension GraphQLResponse {
         let contributionDays: [ContributionDay]
     }
 
-    // MARK: - ContributionDay
+    // MARK: - ContributionDayx
     struct ContributionDay: Decodable {
         let contributionCount: Int
         let date: String
@@ -42,12 +59,16 @@ extension GraphQLResponse {
 
 extension GraphQLResponse {
     public struct UserContribution {
+        public let profile: Profile
         public let totalContributions: Int
         public let contributions: [Contribution]
         
         init(from userContributions: UserContributions) {
             self.totalContributions = userContributions.user.contributionsCollection.contributionCalendar.totalContributions
-            
+            self.profile = Profile(
+                userName: userContributions.user.contributionsCollection.userInfo.name,
+                profileURL: userContributions.user.contributionsCollection.userInfo.avatarURL
+            )
             var contributions: [Contribution] = []
             for week in userContributions.user.contributionsCollection.contributionCalendar.weeks {
                 for contributionDay in week.contributionDays {
@@ -68,5 +89,10 @@ extension GraphQLResponse {
         public let date: String
         public let weekday: Int
         public let color: String
+    }
+    
+    public struct Profile {
+        public let userName: String
+        public let profileURL: String?
     }
 }
