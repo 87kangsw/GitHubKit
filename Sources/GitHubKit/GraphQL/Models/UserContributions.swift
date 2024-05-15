@@ -27,11 +27,13 @@ extension GraphQLResponse {
     // MARK: - Profile
     struct UserInfo: Decodable {
         let avatarURL: String?
-        let name: String
+        let name: String?
+        let login: String
         
         enum CodingKeys: String, CodingKey {
             case avatarURL = "avatarUrl"
             case name
+            case login
         }
     }
 
@@ -66,8 +68,9 @@ extension GraphQLResponse {
         init(from userContributions: UserContributions) {
             self.totalContributions = userContributions.user.contributionsCollection.contributionCalendar.totalContributions
             self.profile = Profile(
-                userName: userContributions.user.contributionsCollection.userInfo.name,
-                profileURL: userContributions.user.contributionsCollection.userInfo.avatarURL
+                login: userContributions.user.contributionsCollection.userInfo.login,
+                profileURL: userContributions.user.contributionsCollection.userInfo.avatarURL,
+                userName: userContributions.user.contributionsCollection.userInfo.name
             )
             var contributions: [Contribution] = []
             for week in userContributions.user.contributionsCollection.contributionCalendar.weeks {
@@ -92,7 +95,8 @@ extension GraphQLResponse {
     }
     
     public struct Profile {
-        public let userName: String
+        public let login: String
         public let profileURL: String?
+        public let userName: String?
     }
 }

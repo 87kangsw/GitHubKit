@@ -25,6 +25,7 @@ extension GraphQLOperation {
                   user {
                      avatarUrl
                      name
+                     login
                   }
                   contributionCalendar {
                     totalContributions
