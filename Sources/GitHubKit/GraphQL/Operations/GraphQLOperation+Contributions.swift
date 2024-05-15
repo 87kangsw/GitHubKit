@@ -22,6 +22,10 @@ extension GraphQLOperation {
             query UserContributions($username: String!, $from: DateTime, $to: DateTime) {
               user(login: $username) {
                 contributionsCollection(from: $from, to: $to) {
+                  user {
+                     avatarUrl
+                     name
+                  }
                   contributionCalendar {
                     totalContributions
                     weeks {

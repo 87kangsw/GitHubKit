@@ -3,11 +3,13 @@ import XCTest
 
 final class GitHubKitTests: XCTestCase {
     
+    let accessToken: String = "your_access_token"
+    
     // MARK: - GraphQL
     
     func test_contributions_default() async throws {
         
-        let githubKit = GitHubKit(config: .init(token: "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"))
+        let githubKit = GitHubKit(config: .init(token: accessToken))
         let response = try await githubKit.contributions(
             userName: "87kangsw"
         )
@@ -18,7 +20,7 @@ final class GitHubKitTests: XCTestCase {
     
     func test_contributions_period() async throws {
         
-        let githubKit = GitHubKit(config: .init(token: "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"))
+        let githubKit = GitHubKit(config: .init(token: accessToken))
         let response = try await githubKit.contributions(
             userName: "87kangsw",
             from: "2022-12-01",
@@ -32,7 +34,7 @@ final class GitHubKitTests: XCTestCase {
     // MARK: - REST
     
     func test_userInfo() async throws {
-        let githubKit = GitHubKit(config: .init(token: "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"))
+        let githubKit = GitHubKit(config: .init(token: accessToken))
         
         let response = try await githubKit.userInfo()
         // print(response)
