@@ -7,7 +7,7 @@ A Swift API Client for GitHub REST &amp; GraphQL
 
 ### REST
 - [x] User
-- [ ] Activities
+- [x] Activities
 
 ### GraphQL
 - [x] Contributions
