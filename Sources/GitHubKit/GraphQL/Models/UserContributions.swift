@@ -16,10 +16,18 @@ extension GraphQLResponse {
     // MARK: - ContributionsCollection
     struct ContributionsCollection: Decodable {
         let userInfo: UserInfo
+        let totalCommitContributions: Int
+        let totalIssueContributions: Int
+        let totalPullRequestContributions: Int
+        let totalPullRequestReviewContributions: Int
         let contributionCalendar: ContributionCalendar
         
         enum CodingKeys: String, CodingKey {
             case userInfo = "user"
+            case totalCommitContributions
+            case totalIssueContributions
+            case totalPullRequestContributions
+            case totalPullRequestReviewContributions
             case contributionCalendar
         }
     }
