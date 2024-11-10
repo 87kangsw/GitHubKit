@@ -27,6 +27,10 @@ extension GraphQLOperation {
                      name
                      login
                   }
+                  totalCommitContributions
+                  totalIssueContributions
+                  totalPullRequestContributions
+                  totalPullRequestReviewContributions
                   contributionCalendar {
                     totalContributions
                     weeks {
