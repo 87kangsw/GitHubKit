@@ -41,16 +41,12 @@ extension RestResponse {
         }
         
         public struct PullRequest: Decodable {
-            public let title: String
             public let number: Int
-            public let state: String
-            public let htmlURL: String
+            public let url: String
             
             enum CodingKeys: String, CodingKey {
-                case title
                 case number
-                case state
-                case htmlURL = "html_url"
+                case url
             }
         }
     }
@@ -76,7 +72,6 @@ extension RestResponse {
     
     public struct PushEventPayload: EventPayload {
         public let ref: String
-        public let commits: [Commit]
         public var action: EventActionState? { return .created }
         
         public struct Commit: Decodable {

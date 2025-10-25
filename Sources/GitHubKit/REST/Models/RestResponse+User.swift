@@ -2,7 +2,7 @@ import Foundation
 
 extension RestResponse {
     // MARK: - User
-    public struct User: Decodable {
+    public struct User: Codable {
         public let id: Int
         public let login: String
         public let avatarURL: String
@@ -14,20 +14,20 @@ extension RestResponse {
         public let company: String?
         public let blog: String?
         public let location: String?
-        public let email: String
-        public let bio: String
-        public let twitterUsername: String
+        public let email: String?
+        public let bio: String?
+        public let twitterUsername: String?
         public let publicRepos: Int
         public let publicGists: Int
         public let followers: Int
         public let following: Int
         public let createdAt: Date
         public let updatedAt: Date?
-        public let privateGists: Int
-        public let totalPrivateRepos: Int
-        public let ownedPrivateRepos: Int
-        public let collaborators: Int
-        public let plan: Plan
+        public let privateGists: Int?
+        public let totalPrivateRepos: Int?
+        public let ownedPrivateRepos: Int?
+        public let collaborators: Int?
+        public let plan: Plan?
 
         enum CodingKeys: String, CodingKey {
             case login = "login"
@@ -59,7 +59,7 @@ extension RestResponse {
     }
 
     // MARK: - Plan
-    public struct Plan: Decodable {
+    public struct Plan: Codable {
         public let name: String
 
         enum CodingKeys: String, CodingKey {

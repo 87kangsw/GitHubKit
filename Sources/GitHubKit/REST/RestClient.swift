@@ -18,9 +18,7 @@ public class RestClient {
             throw URLError(.badServerResponse)
         }
         
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
-        let decodedData = try decoder.decode(T.self, from: data)
+        let decodedData = try JSONDecoder.debugDecode(T.self, from: data)
         return decodedData
     }
 
