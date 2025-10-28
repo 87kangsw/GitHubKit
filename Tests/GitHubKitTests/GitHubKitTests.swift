@@ -4,6 +4,59 @@ import XCTest
 final class GitHubKitTests: XCTestCase {
     
     let accessToken: String = "your_access_token"
+
+    // MARK: - Event Type Tests
+
+    func test_eventTypeDecoding() throws {
+        // Test new event types can be decoded
+        let eventTypes: [String: EventType] = [
+            "CommitCommentEvent": .commitCommentEvent,
+            "PullRequestReviewEvent": .pullRequestReviewEvent,
+            "IssueCommentEvent": .issueCommentEvent,
+            "PullRequestReviewCommentEvent": .pullRequestReviewCommentEvent,
+            "PublicEvent": .publicEvent,
+            "DeleteEvent": .deleteEvent,
+            "UnknownEvent": .unknown
+        ]
+
+        for (jsonString, expectedType) in eventTypes {
+            let jsonData = "\"\(jsonString)\"".data(using: .utf8)!
+            let decodedType = try JSONDecoder().decode(EventType.self, from: jsonData)
+            XCTAssertEqual(decodedType, expectedType, "Failed to decode \(jsonString)")
+        }
+    }
+
+    func test_eventDescriptionStyle() throws {
+        // Test that event descriptions follow the new concise style
+        let jsonData = """
+        {
+            "id": "123",
+            "type": "WatchEvent",
+            "actor": {
+                "id": 1,
+                "login": "testuser",
+                "avatar_url": "https://example.com/avatar.jpg",
+                "gravatar_id": "",
+                "url": "https://github.com/testuser"
+            },
+            "repo": {
+                "id": 456,
+                "name": "testowner/testrepo",
+                "url": "https://github.com/testowner/testrepo"
+            },
+            "payload": {
+                "action": "started"
+            },
+            "public": true,
+            "created_at": "2025-10-28T10:00:00Z"
+        }
+        """.data(using: .utf8)!
+
+        let event = try JSONDecoder().decode(RestResponse.Event.self, from: jsonData)
+
+        // Should be concise like "starred", not "Starred repository"
+        XCTAssertEqual(event.eventDescription, "starred")
+    }
     
     // MARK: - GraphQL
     

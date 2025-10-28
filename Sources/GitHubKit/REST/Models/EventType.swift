@@ -9,6 +9,9 @@ public enum EventType: String, Codable {
     case releaseEvent = "ReleaseEvent"
     case pullRequestReviewCommentEvent = "PullRequestReviewCommentEvent"
     case publicEvent = "PublicEvent"
+    case commitCommentEvent = "CommitCommentEvent"
+    case pullRequestReviewEvent = "PullRequestReviewEvent"
+    case deleteEvent = "DeleteEvent"
     case unknown
     
     public init(from decoder: Decoder) throws {

@@ -6,12 +6,13 @@ extension RestResponse {
         public let type: EventType
         public let actor: Actor
         public let repo: Repository
+        public let org: Organization?
         public let payload: EventPayload?
         public let createdAt: Date
         public let isPublic: Bool
-        
+
         enum CodingKeys: String, CodingKey {
-            case id, type, actor, repo, payload
+            case id, type, actor, repo, org, payload
             case createdAt = "created_at"
             case isPublic = "public"
         }
@@ -23,6 +24,7 @@ extension RestResponse {
             type = try container.decode(EventType.self, forKey: .type)
             actor = try container.decode(Actor.self, forKey: .actor)
             repo = try container.decode(Repository.self, forKey: .repo)
+            org = try container.decodeIfPresent(Organization.self, forKey: .org)
             isPublic = try container.decode(Bool.self, forKey: .isPublic)
             
             let dateString = try container.decode(String.self, forKey: .createdAt)
@@ -45,6 +47,18 @@ extension RestResponse {
                 payload = try container.decode(IssuesEventPayload.self, forKey: .payload)
             case .releaseEvent:
                 payload = try container.decode(ReleaseEventPayload.self, forKey: .payload)
+            case .issueCommentEvent:
+                payload = try container.decode(IssueCommentEventPayload.self, forKey: .payload)
+            case .pullRequestReviewCommentEvent:
+                payload = try container.decode(PullRequestReviewCommentEventPayload.self, forKey: .payload)
+            case .publicEvent:
+                payload = try container.decode(PublicEventPayload.self, forKey: .payload)
+            case .commitCommentEvent:
+                payload = try container.decode(CommitCommentEventPayload.self, forKey: .payload)
+            case .pullRequestReviewEvent:
+                payload = try container.decode(PullRequestReviewEventPayload.self, forKey: .payload)
+            case .deleteEvent:
+                payload = try container.decode(DeleteEventPayload.self, forKey: .payload)
             default:
                 payload = nil
             }
@@ -56,28 +70,52 @@ extension RestResponse {
                 guard let payload = payload as? CreateEventPayload else { return "" }
                 switch payload.refType {
                 case .repository:
-                    return "Created repository"
+                    return "created a repository"
                 case .branch:
-                    return "Created branch: \(payload.ref ?? "")"
+                    let ref = payload.ref ?? ""
+                    return "created a branch '\(ref)'"
                 case .tag:
-                    return "Created tag: \(payload.ref ?? "")"
+                    let ref = payload.ref ?? ""
+                    return "created a tag '\(ref)'"
                 case .unknown:
-                    return "Created unknown"
+                    return "created"
                 }
             case .watchEvent:
-                return "Starred repository"
+                return "starred"
             case .pullRequestEvent:
                 guard let payload = payload as? PullRequestEventPayload else { return "" }
-                return "Pull request #\(payload.number) \(payload.action?.rawValue ?? "")"
+                let action = payload.action?.rawValue ?? "updated"
+                return "\(action) PR #\(payload.number)"
             case .pushEvent:
-                guard let payload = payload as? PushEventPayload else { return "" }
-                let branch = payload.ref.split(separator: "/").last ?? ""
-                return "Pushed to \(branch)"
+                return "pushed"
             case .forkEvent:
-                return "Forked repository"
+                return "forked from \(repo.name)"
             case .issuesEvent:
                 guard let payload = payload as? IssuesEventPayload else { return "" }
-                return "Issue #\(payload.issue.number) \(payload.action?.rawValue ?? "")"
+                let action = payload.action?.rawValue ?? "updated"
+                return "\(action) #\(payload.issue.number)"
+            case .issueCommentEvent:
+                guard let payload = payload as? IssueCommentEventPayload else { return "" }
+                return "commented on issue #\(payload.issue.number)"
+            case .pullRequestReviewCommentEvent:
+                guard let payload = payload as? PullRequestReviewCommentEventPayload else { return "" }
+                return "commented on PR #\(payload.pullRequest.number)"
+            case .publicEvent:
+                return "made public"
+            case .commitCommentEvent:
+                guard let payload = payload as? CommitCommentEventPayload else { return "" }
+                let shortSha = String(payload.comment.commitId.prefix(7))
+                return "commented on \(shortSha)"
+            case .pullRequestReviewEvent:
+                guard let payload = payload as? PullRequestReviewEventPayload else { return "" }
+                return "reviewed PR #\(payload.pullRequest.number)"
+            case .deleteEvent:
+                guard let payload = payload as? DeleteEventPayload else { return "" }
+                return "deleted \(payload.refType) '\(payload.ref)'"
+            case .releaseEvent:
+                guard let payload = payload as? ReleaseEventPayload else { return "" }
+                let action = payload.action?.rawValue ?? "updated"
+                return "\(action) release"
             default:
                 return type.rawValue
             }
@@ -89,11 +127,14 @@ extension RestResponse {
         public let login: String
         public let displayLogin: String?
         public let avatarURL: String
-        
+        public let gravatarID: String?
+        public let url: String
+
         enum CodingKeys: String, CodingKey {
-            case id, login
+            case id, login, url
             case displayLogin = "display_login"
             case avatarURL = "avatar_url"
+            case gravatarID = "gravatar_id"
         }
     }
     
@@ -101,5 +142,19 @@ extension RestResponse {
         public let id: Int
         public let name: String
         public let url: String
+    }
+
+    public struct Organization: Decodable {
+        public let id: Int
+        public let login: String
+        public let avatarURL: String
+        public let gravatarID: String?
+        public let url: String
+
+        enum CodingKeys: String, CodingKey {
+            case id, login, url
+            case avatarURL = "avatar_url"
+            case gravatarID = "gravatar_id"
+        }
     }
 } 

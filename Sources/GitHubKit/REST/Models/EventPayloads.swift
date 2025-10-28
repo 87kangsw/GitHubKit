@@ -15,6 +15,19 @@ extension RestResponse {
     public protocol EventPayload: Decodable {
         var action: EventActionState? { get }
     }
+
+    public struct EventUser: Decodable {
+        public let id: Int
+        public let login: String
+        public let avatarURL: String
+        public let htmlURL: String
+
+        enum CodingKeys: String, CodingKey {
+            case id, login
+            case avatarURL = "avatar_url"
+            case htmlURL = "html_url"
+        }
+    }
     
     public struct CreateEventPayload: EventPayload {
         public let refType: CreateEventRefType
@@ -93,19 +106,110 @@ extension RestResponse {
     public struct ReleaseEventPayload: EventPayload {
         public let action: EventActionState?
         public let release: Release
-        
+
         public struct Release: Decodable {
             public let tagName: String
             public let name: String?
             public let body: String?
             public let htmlURL: String
-            
+
             enum CodingKeys: String, CodingKey {
                 case tagName = "tag_name"
                 case name
                 case body
                 case htmlURL = "html_url"
             }
+        }
+    }
+
+    public struct IssueCommentEventPayload: EventPayload {
+        public let action: EventActionState?
+        public let issue: IssuesEventPayload.Issue
+        public let comment: Comment
+
+        public struct Comment: Decodable {
+            public let id: Int
+            public let body: String
+            public let htmlURL: String
+            public let user: EventUser
+
+            enum CodingKeys: String, CodingKey {
+                case id, body, user
+                case htmlURL = "html_url"
+            }
+        }
+    }
+
+    public struct PullRequestReviewCommentEventPayload: EventPayload {
+        public let action: EventActionState?
+        public let pullRequest: PullRequestEventPayload.PullRequest
+        public let comment: Comment
+
+        public struct Comment: Decodable {
+            public let id: Int
+            public let body: String
+            public let htmlURL: String
+            public let user: EventUser
+
+            enum CodingKeys: String, CodingKey {
+                case id, body, user
+                case htmlURL = "html_url"
+            }
+        }
+    }
+
+    public struct PublicEventPayload: EventPayload {
+        public var action: EventActionState? { return .created }
+    }
+
+    public struct CommitCommentEventPayload: EventPayload {
+        public let action: EventActionState?
+        public let comment: Comment
+
+        public struct Comment: Decodable {
+            public let id: Int
+            public let body: String
+            public let commitId: String
+            public let htmlURL: String
+            public let user: EventUser
+
+            enum CodingKeys: String, CodingKey {
+                case id, body, user
+                case commitId = "commit_id"
+                case htmlURL = "html_url"
+            }
+        }
+    }
+
+    public struct PullRequestReviewEventPayload: EventPayload {
+        public let action: EventActionState?
+        public let pullRequest: PullRequestEventPayload.PullRequest
+        public let review: Review
+
+        public struct Review: Decodable {
+            public let id: Int
+            public let body: String?
+            public let state: String
+            public let htmlURL: String
+            public let user: EventUser
+
+            enum CodingKeys: String, CodingKey {
+                case id, body, state, user
+                case htmlURL = "html_url"
+            }
+        }
+    }
+
+    public struct DeleteEventPayload: EventPayload {
+        public let ref: String
+        public let refType: String
+        public let pusherType: String
+        public var action: EventActionState? { return .deleted }
+
+        enum CodingKeys: String, CodingKey {
+            case ref
+            case refType = "ref_type"
+            case pusherType = "pusher_type"
         }
     }
 } 
