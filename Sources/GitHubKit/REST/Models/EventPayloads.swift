@@ -145,6 +145,11 @@ extension RestResponse {
         public let pullRequest: PullRequestEventPayload.PullRequest
         public let comment: Comment
 
+        enum CodingKeys: String, CodingKey {
+            case action, comment
+            case pullRequest = "pull_request"
+        }
+
         public struct Comment: Decodable {
             public let id: Int
             public let body: String
