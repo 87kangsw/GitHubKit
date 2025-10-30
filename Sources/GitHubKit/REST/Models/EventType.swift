@@ -27,6 +27,9 @@ public enum EventActionState: String, Codable {
     case created
     case edited
     case deleted
+    case published
+    case reopened
+    case started
     case unknown
     
     public init(from decoder: Decoder) throws {

@@ -84,16 +84,40 @@ extension RestResponse {
                 return "starred"
             case .pullRequestEvent:
                 guard let payload = payload as? PullRequestEventPayload else { return "" }
-                let action = payload.action?.rawValue ?? "updated"
-                return "\(action) PR #\(payload.number)"
+                let action = payload.action
+                switch action {
+                case .opened:
+                    return "opened PR #\(payload.number)"
+                case .closed:
+                    return "closed PR #\(payload.number)"
+                case .reopened:
+                    return "reopened PR #\(payload.number)"
+                case .edited:
+                    return "edited PR #\(payload.number)"
+                default:
+                    let actionText = action?.rawValue ?? "updated"
+                    return "\(actionText) PR #\(payload.number)"
+                }
             case .pushEvent:
                 return "pushed"
             case .forkEvent:
                 return "forked from \(repo.name)"
             case .issuesEvent:
                 guard let payload = payload as? IssuesEventPayload else { return "" }
-                let action = payload.action?.rawValue ?? "updated"
-                return "\(action) #\(payload.issue.number)"
+                let action = payload.action
+                switch action {
+                case .opened:
+                    return "opened issue #\(payload.issue.number)"
+                case .closed:
+                    return "closed issue #\(payload.issue.number)"
+                case .reopened:
+                    return "reopened issue #\(payload.issue.number)"
+                case .edited:
+                    return "edited issue #\(payload.issue.number)"
+                default:
+                    let actionText = action?.rawValue ?? "updated"
+                    return "\(actionText) issue #\(payload.issue.number)"
+                }
             case .issueCommentEvent:
                 guard let payload = payload as? IssueCommentEventPayload else { return "" }
                 return "commented on issue #\(payload.issue.number)"
@@ -114,8 +138,20 @@ extension RestResponse {
                 return "deleted \(payload.refType) '\(payload.ref)'"
             case .releaseEvent:
                 guard let payload = payload as? ReleaseEventPayload else { return "" }
-                let action = payload.action?.rawValue ?? "updated"
-                return "\(action) release"
+                let action = payload.action
+                switch action {
+                case .published:
+                    return "published a release"
+                case .created:
+                    return "created a release"
+                case .edited:
+                    return "edited a release"
+                case .deleted:
+                    return "deleted a release"
+                default:
+                    let actionText = action?.rawValue ?? "updated"
+                    return "\(actionText) a release"
+                }
             default:
                 return type.rawValue
             }
